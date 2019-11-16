@@ -17,7 +17,7 @@ import argparse
 
 import ezpygame
 
-import menu
+from . import menu
 
 
 def parse_args():

@@ -3,7 +3,7 @@
 import ezpygame
 import pygame
 
-import game
+from . import game
 
 
 class Menu(ezpygame.Scene):
