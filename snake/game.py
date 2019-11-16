@@ -1,3 +1,5 @@
+"""The Game scene and related components for the game's logic."""
+
 import collections
 import enum
 import random
@@ -7,6 +9,7 @@ import pygame
 
 
 class Direction(enum.Enum):
+    """Simple enum for representing the snake's direction."""
     UP = 1
     DOWN = 2
     LEFT = 3
@@ -14,6 +17,7 @@ class Direction(enum.Enum):
 
 
 def opposite_directions(d1, d2):
+    """Check if two directions are opposite to each other."""
     if d1 == d2:
         return False
     horizontal = {Direction.UP, Direction.DOWN}
@@ -24,6 +28,8 @@ def opposite_directions(d1, d2):
     )
 
 
+# Map pygame's arrow keys to Snake game's directions
+# TODO: Use config file so user can change movement keys (e.g. WASD)
 _key_to_direction_map = {
     pygame.K_UP: Direction.UP,
     pygame.K_DOWN: Direction.DOWN,
@@ -33,6 +39,12 @@ _key_to_direction_map = {
 
 
 class Snake(collections.deque):
+    """The snake itself.
+    
+    The snake works by subclassing deque:
+    - whenever the snake moves, his tail is popped and head is appended
+    - if he's eaten, then the tail isn't popped to extend his length
+    """
 
     def __init__(self, *args, direction=Direction.RIGHT, **kwargs):
         super().__init__(*args, **kwargs)
@@ -41,9 +53,15 @@ class Snake(collections.deque):
 
     @property
     def head(self):
+        """The head element of the snake."""
         return self[-1]
 
     def move(self):
+        """Move the snake to its direction by one step.
+
+        If the snake is set to extend via :attr:`extend` attribute,
+        then his tail element will not be popped.
+        """
         x, y = self.head
         if self.direction == Direction.UP:
             y -= 1
@@ -61,6 +79,15 @@ class Snake(collections.deque):
 
 
 class Game(ezpygame.Scene):
+    """EzPyGame scene for the game itself.
+    
+    Controls everything from the snake and apple to drawing the game.
+
+    Also implements movement key buffering, where pressing two movement
+    keys consecutively will ensure the snake first moves towards
+    the first direction and then on next tick towards the second one,
+    instead of ignoring one of the pressed keys.
+    """
     update_rate = 10
 
     def __init__(self, speed=5, size=(12, 9), *args, **kwargs):
