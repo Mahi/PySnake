@@ -1,3 +1,5 @@
+"""Module for the Menu scene."""
+
 import ezpygame
 import pygame
 
@@ -5,6 +7,7 @@ import game
 
 
 class Menu(ezpygame.Scene):
+    """The menu scene for managing high scores and starting a game."""
     update_rate = 10
 
     def __init__(self, high_scores, username, *args, **kwargs):
@@ -14,6 +17,7 @@ class Menu(ezpygame.Scene):
         self._play_button = None
 
     def on_enter(self, previous_scene):
+        """Re-render the play button and update high scores."""
         super().on_enter(previous_scene)
         font = pygame.font.Font(None, 56)
         self._play_button = font.render('Play', 0, pygame.Color('white'))
@@ -45,6 +49,7 @@ class Menu(ezpygame.Scene):
             y += text.get_height() + 10
 
     def handle_event(self, event):
+        """Start a new game if the play button was clicked."""
         if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
             screenw, screenh = self.application.resolution
             left = (screenw - self._play_button.get_width()) // 2
@@ -56,6 +61,7 @@ class Menu(ezpygame.Scene):
                 self.application.change_scene(game_scene)
 
     def _update_high_scores(self, score):
+        """Add a new score and keep the top 10 high scores."""
         self.high_scores.append((self.username, score))
         self.high_scores.sort(key=lambda x: x[1], reverse=True)
         self.high_scores = self.high_scores[:10]
