@@ -1,3 +1,0 @@
-mahi:200
-jaakko:34
-maHi:1
